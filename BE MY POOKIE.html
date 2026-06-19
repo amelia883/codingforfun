@@ -22,7 +22,7 @@
       justify-content: center;
 
       /* 🎨 CUSTOMISE: change background color or add a background image */
-      background-color: #fff0f5;
+      background-color: #a369b8;
       font-family: "Georgia", serif;
     }
 
@@ -116,10 +116,12 @@
       gap: 1rem;
     }
 
-    #success-screen .big-emoji {
-      font-size: 80px;
-      animation: pop 0.5s cubic-bezier(.36, 1.56, .64, 1) forwards;
-    }
+   .success-gif {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 16px;  /* remove this if you don't want rounded corners */
+   }    
 
     #success-screen h2 {
       font-size: 28px;
@@ -187,10 +189,10 @@
   <div id="success-screen">
 
     <!-- 🎨 CUSTOMISE: change emoji, heading, and message -->
-    <div class="big-emoji">🎉</div>
+    <img src="https://media.tenor.com/dZ0ost9JVMsAAAAd/dance-party.gif" alt="celebration" class="success-gif" />
     <h2>Yay!! 💕</h2>
-    <p>I knew you'd say yes!<br>You just made me the happiest person ever 😊</p>
-
+    <p>Ofc you can only say yes!<br>You just made me the happiest person ever once again HEHE 😊</p>
+      
   </div>
 
 
