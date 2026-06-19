@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> A QUESTION FOR YOU😍 </title>
+    
+  <style>
+    /* =====================
+       PAGE LAYOUT
+    ===================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      /* 🎨 CUSTOMISE: change background color or add a background image */
+      background-color: #fff0f5;
+      font-family: "Georgia", serif;
+    }
+
+    /* =====================
+       QUESTION CARD
+    ===================== */
+    .card {
+      text-align: center;
+      padding: 3rem 2.5rem;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #e6b2da;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    /* 🎨 CUSTOMISE: swap out the emoji or use an <img> instead */
+   .card-emoji {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;      /* crops nicely if the image isn't square */
+  border-radius: 50%;     /* makes it a circle — remove if you want square */
+  margin-bottom: 1rem;
+}
+
+    /* 🎨 CUSTOMISE: change the question text in the HTML below */
+    .card h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #72243e;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 2rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+
+    /* =====================
+       YES BUTTON
+    ===================== */
+    #yes-btn {
+      padding: 12px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #d4537e;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    #yes-btn:hover  { background: #993556; }
+    #yes-btn:active { transform: scale(0.97); }
+
+
+    /* =====================
+       NO BUTTON  (the sneaky one)
+    ===================== */
+    #no-btn {
+      padding: 12px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #fff;
+      color: #444;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      cursor: pointer;
+
+      /* keeps it in flow until first hover, then JS switches to fixed */
+    }
+
+
+    /* =====================
+       SUCCESS SCREEN  (shown after Yes)
+    ===================== */
+    #success-screen {
+      display: none;           /* JS toggles this to flex */
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    #success-screen .big-emoji {
+      font-size: 80px;
+      animation: pop 0.5s cubic-bezier(.36, 1.56, .64, 1) forwards;
+    }
+
+    #success-screen h2 {
+      font-size: 28px;
+      color: #d4537e;
+    }
+
+    #success-screen p {
+      font-size: 16px;
+      color: #666;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+
+    /* =====================
+       CONFETTI PIECES  (created by JS)
+    ===================== */
+    .confetti-piece {
+      position: fixed;
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =====================
+       QUESTION CARD
+  ===================== -->
+  <div id="question-card" class="card">
+
+    <!-- 🎨 CUSTOMISE: swap emoji, add an <img>, or change the heading -->
+   <img src="peace sign kuarina.jpg" alt="cute pic" class="card-emoji" />
+    <h1>Does SMARTIE LEE love NOOBIE KUAHRINA😍</h1>
+    <p>YOU ONLY HAVE ONE CHANCE 👀</p>
+
+    <div class="btn-group">
+      <button id="yes-btn" onclick="handleYes()">
+        Yes! 💖
+      </button>
+
+      <!-- No button starts here; JS moves it on hover -->
+      <button
+        id="no-btn"
+        onmouseenter="runAway()"
+        ontouchstart="runAway()"
+      >
+        No 😢
+      </button>
+    </div>
+  </div>
+
+
+  <!-- =====================
+       SUCCESS SCREEN
+       (hidden until Yes is clicked)
+  ===================== -->
+  <div id="success-screen">
+
+    <!-- 🎨 CUSTOMISE: change emoji, heading, and message -->
+    <div class="big-emoji">🎉</div>
+    <h2>Yay!! 💕</h2>
+    <p>I knew you'd say yes!<br>You just made me the happiest person ever 😊</p>
+
+  </div>
+
+
+  <script>
+    /* ─────────────────────────────────────────
+       RUNAWAY NO BUTTON
+    ───────────────────────────────────────── */
+    const noBtn = document.getElementById('no-btn');
+    let placed = false;
+
+    // Pick a random position that keeps the button fully on screen
+    function randomPos() {
+      const bw = noBtn.offsetWidth  || 120;
+      const bh = noBtn.offsetHeight || 48;
+      const margin = 20;
+      const x = margin + Math.random() * (window.innerWidth  - bw - margin * 2);
+      const y = margin + Math.random() * (window.innerHeight - bh - margin * 2);
+      return { x, y };
+    }
+
+    function runAway() {
+      // On first hover, pull the button out of normal flow
+      if (!placed) {
+        noBtn.style.position = 'fixed';
+        placed = true;
+      }
+
+      // Teleport to a new random spot
+      const { x, y } = randomPos();
+      noBtn.style.left = x + 'px';
+      noBtn.style.top  = y + 'px';
+
+      /* 🎨 CUSTOMISE: add a smooth slide instead of instant teleport —
+         replace the two lines above with:
+           noBtn.style.transition = 'left 0.15s ease, top 0.15s ease';
+           noBtn.style.left = x + 'px';
+           noBtn.style.top  = y + 'px';
+      */
+    }
+
+
+    /* ─────────────────────────────────────────
+       YES BUTTON HANDLER
+    ───────────────────────────────────────── */
+    function handleYes() {
+      // Hide question card and No button
+      document.getElementById('question-card').style.display = 'none';
+      noBtn.style.display = 'none';
+
+      // Show success screen
+      const screen = document.getElementById('success-screen');
+      screen.style.display = 'flex';
+
+      // 🎨 CUSTOMISE: add a sound, redirect, or extra animation here
+      launchConfetti();
+    }
+
+
+    /* ─────────────────────────────────────────
+       CONFETTI
+    ───────────────────────────────────────── */
+
+    // 🎨 CUSTOMISE: swap in your own colors
+    const confettiColors = [
+      '#d4537e', '#e6b2da',
+      '#7f77dd', '#cecbf6',
+      '#fac775', '#5dcaa5',
+    ];
+
+    function launchConfetti() {
+      for (let i = 0; i < 80; i++) {
+        setTimeout(() => spawnPiece(), i * 30);
+      }
+    }
+
+    function spawnPiece() {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      el.style.left   = (10 + Math.random() * 80) + 'vw';
+      el.style.top    = '-12px';
+      el.style.width  = (7 + Math.random() * 7) + 'px';
+      el.style.height = (7 + Math.random() * 7) + 'px';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      document.body.appendChild(el);
+
+      const dur   = 1200 + Math.random() * 1000;
+      const drift = (Math.random() - 0.5) * 200;
+      const rot   = Math.random() * 720;
+
+      el.animate([
+        { opacity: 1, transform: 'translateY(0) translateX(0) rotate(0deg)' },
+        { opacity: 0, transform: `translateY(70vh) translateX(${drift}px) rotate(${rot}deg)` },
+      ], { duration: dur, easing: 'ease-in', fill: 'forwards' });
+
+      setTimeout(() => el.remove(), dur + 100);
+    }
+  </script>
+
+</body>
+</html>
